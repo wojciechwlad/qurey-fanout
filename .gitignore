@@ -3,3 +3,6 @@ __pycache__/
 *.pyc
 uv.lock
 .env
+
+# Gemini API Key - contains sensitive information
+.gemini_api_key

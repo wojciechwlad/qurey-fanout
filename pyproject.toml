@@ -1,6 +1,6 @@
 [project]
 name = "query-fanout"
-version = "0.1.0"
+version = "0.2.0"
 description = "Streamlit GUI for Gemini query fanout and ranking by embeddings"
 readme = "README.md"
 license = "MIT"
