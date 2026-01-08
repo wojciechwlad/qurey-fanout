@@ -3,9 +3,10 @@ name = "query-fanout"
 version = "0.1.0"
 description = "Streamlit GUI for Gemini query fanout and ranking by embeddings"
 readme = "README.md"
-license = { text = "MIT" }
+license = "MIT"
 
-[project.dependencies]
-streamlit = "*"
-requests = "*"
-numpy = "*"
+dependencies = [
+    "streamlit",
+    "requests",
+    "numpy"
+]
