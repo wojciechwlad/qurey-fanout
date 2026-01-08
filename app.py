@@ -12,42 +12,6 @@ st.set_page_config(page_title="Gemini Query Fanout", layout="centered")
 
 # ---------------------------- Utils ----------------------------
 
-API_KEY_FILE = Path(".gemini_api_key")
-
-def save_api_key(api_key: str) -> bool:
-    """Save API key to local file with basic encoding."""
-    try:
-        # Use base64 encoding for basic obfuscation (not encryption)
-        encoded = b64encode(api_key.encode()).decode()
-        API_KEY_FILE.write_text(encoded)
-        return True
-    except Exception as e:
-        st.error(f"Failed to save API key: {e}")
-        return False
-
-def load_api_key() -> Optional[str]:
-    """Load API key from local file."""
-    try:
-        if API_KEY_FILE.exists():
-            encoded = API_KEY_FILE.read_text().strip()
-            decoded = b64decode(encoded).decode()
-            return decoded
-        return None
-    except Exception as e:
-        st.error(f"Failed to load API key: {e}")
-        return None
-
-def delete_api_key() -> bool:
-    """Delete saved API key file."""
-    try:
-        if API_KEY_FILE.exists():
-            API_KEY_FILE.unlink()
-            return True
-        return False
-    except Exception as e:
-        st.error(f"Failed to delete API key: {e}")
-        return False
-
 
 def custom_cosine_similarity(a: List[float], b: List[float]) -> float:
     try:
@@ -269,36 +233,12 @@ def main():
             "Language", value="Polish", placeholder="e.g., English, Polish"
         )
         
-        # API Key - placed early so it can be used for model fetching
-        st.markdown("**Gemini API Key**")
-        
-        # Initialize session state for API key
-        if "api_key_input" not in st.session_state:
-            # Try to load from file on first run
-            loaded_key = load_api_key()
-            st.session_state.api_key_input = loaded_key if loaded_key else ""
-        
-        col1, col2, col3, col4 = st.columns([3, 1, 1, 1])
-        
-        with col1:
-            api_key = st.text_input(
-                "API Key",
-                value=st.session_state.api_key_input,
-                type="password",
-                help="Enter your Gemini API key",
-                label_visibility="collapsed"
-            )
-            # Update session state
-            st.session_state.api_key_input = api_key
-        
-        with col2:
-            save_clicked = st.form_submit_button("💾", help="Save API key to local file")
-        
-        with col3:
-            load_clicked = st.form_submit_button("📂", help="Load API key from local file")
-        
-        with col4:
-            delete_clicked = st.form_submit_button("🗑️", help="Delete saved API key")
+        # API Key
+        api_key = st.text_input(
+            "Gemini API Key",
+            type="password",
+            help="Enter your Gemini API key"
+        )
         
         # Model selection with refresh capability
         st.markdown("---")
@@ -376,31 +316,7 @@ def main():
         show_raw = st.checkbox("Show raw model text response")
         submit = st.form_submit_button("Generate")
     
-    # Handle API key button clicks outside form
-    if save_clicked:
-        if api_key:
-            if save_api_key(api_key):
-                st.success("✅ API key saved to local file")
-        else:
-            st.warning("⚠️ Enter API key first")
-    
-    if load_clicked:
-        loaded = load_api_key()
-        if loaded:
-            st.session_state.api_key_input = loaded
-            st.success("✅ API key loaded from local file")
-            st.rerun()
-        else:
-            st.info("ℹ️ No saved API key found")
-    
-    if delete_clicked:
-        if delete_api_key():
-            st.session_state.api_key_input = ""
-            st.success("✅ Saved API key deleted")
-            st.rerun()
-        else:
-            st.info("ℹ️ No saved API key to delete")
-    
+
     # Handle refresh button click outside form to avoid conflicts
     if refresh_clicked:
         if api_key:
@@ -451,7 +367,7 @@ def main():
 
     st.markdown("---")
     st.markdown(
-        "**Notes:**\n- Use 💾 to save, 📂 to load, or 🗑️ to delete your API key (stored in `.gemini_api_key` with base64 encoding).\n- **Security:** Keep your project folder secure as the API key is stored locally.\n- The API key is sent to Google's Gemini API endpoints.\n- Use the `Download JSON` button to save results locally."
+        "**Notes:**\n- The API key is sent to Google's Gemini API endpoints.\n- Use the `Download JSON` button to save results locally."
     )
 
 
